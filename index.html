@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)file:///C:/Users/chaimr/Downloads/survey.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tell Us About You — Survey</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./survey_files/css2" rel="stylesheet">
+<style>
+  /* =========================================================
+     CONFIG — paste your Google Apps Script Web App URL below.
+     Leave it blank to run in DEMO mode (answers shown on screen,
+     nothing is sent anywhere).
+     ========================================================= */
+  :root{
+    --paper:#f4efe6;
+    --paper-2:#ece4d6;
+    --ink:#2b2622;
+    --ink-soft:#5d554c;
+    --accent:#bc4b2a;
+    --accent-deep:#9a3a1f;
+    --line:#d8cdba;
+    --good:#3f6b4f;
+    --radius:14px;
+    --shadow:0 20px 50px -28px rgba(43,38,34,.55);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:"Hanken Grotesk",system-ui,sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 600px at 12% -8%, #fbf7ef 0%, transparent 60%),
+      radial-gradient(900px 500px at 95% 0%, #efe6d6 0%, transparent 55%),
+      var(--paper);
+    background-attachment:fixed;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* subtle grain */
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .wrap{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:clamp(28px,6vw,72px) clamp(18px,5vw,28px) 80px}
+
+  header.hero{margin-bottom:42px}
+  .kicker{
+    font-size:13px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent-deep);font-weight:600;margin:0 0 14px;
+    display:inline-flex;align-items:center;gap:10px;
+  }
+  .kicker::before{content:"";width:32px;height:1px;background:var(--accent)}
+  h1{
+    font-family:"Fraunces",serif;font-weight:900;
+    font-size:clamp(38px,8vw,64px);line-height:.98;letter-spacing:-.02em;
+    margin:0 0 18px;
+  }
+  h1 em{font-style:italic;font-weight:500;color:var(--accent)}
+  .lede{font-size:clamp(16px,2.4vw,18px);color:var(--ink-soft);max-width:46ch;margin:0}
+
+  form{margin-top:8px}
+  .field{
+    background:rgba(255,255,255,.45);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    padding:22px 22px 24px;
+    margin-bottom:18px;
+    box-shadow:var(--shadow);
+    animation:rise .5s ease both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  .field.conditional{display:none}
+  .field.conditional.show{display:block}
+
+  .q-num{font-family:"Fraunces",serif;font-style:italic;color:var(--accent);font-size:15px}
+  label.q{display:block;font-weight:600;font-size:18px;margin:4px 0 4px}
+  .hint{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px}
+  .req{color:var(--accent);font-weight:700}
+
+  input[type=text],input[type=email],textarea,select{
+    width:100%;font:inherit;color:var(--ink);
+    background:var(--paper);border:1.5px solid var(--line);
+    border-radius:10px;padding:13px 14px;transition:border-color .2s,box-shadow .2s;
+  }
+  textarea{min-height:96px;resize:vertical}
+  input:focus,textarea:focus,select:focus{
+    outline:none;border-color:var(--accent);
+    box-shadow:0 0 0 4px rgba(188,75,42,.12);
+  }
+
+  .opts{display:grid;gap:10px}
+  .opt{
+    display:flex;align-items:flex-start;gap:12px;cursor:pointer;
+    border:1.5px solid var(--line);border-radius:10px;padding:13px 15px;
+    background:var(--paper);transition:border-color .15s,background .15s,transform .05s;
+  }
+  .opt:hover{border-color:var(--accent)}
+  .opt:active{transform:scale(.995)}
+  .opt input{margin-top:3px;accent-color:var(--accent);width:18px;height:18px;flex:0 0 auto}
+  .opt:has(input:checked){border-color:var(--accent);background:rgba(188,75,42,.07)}
+  .opt span{font-size:15.5px}
+
+  .err{color:var(--accent-deep);font-size:13px;margin:8px 0 0;display:none}
+  .field.invalid .err{display:block}
+  .field.invalid{border-color:var(--accent)}
+
+  .submit-row{margin-top:28px;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+  button.submit{
+    font:inherit;font-weight:600;font-size:17px;color:#fff;cursor:pointer;
+    background:var(--accent);border:none;border-radius:999px;
+    padding:15px 38px;letter-spacing:.01em;
+    box-shadow:0 14px 30px -12px rgba(188,75,42,.7);
+    transition:transform .12s,background .2s,box-shadow .2s;
+  }
+  button.submit:hover{background:var(--accent-deep);transform:translateY(-1px)}
+  button.submit:disabled{opacity:.6;cursor:default;transform:none}
+  .note{font-size:13px;color:var(--ink-soft)}
+
+  /* success / demo panels */
+  .done{
+    display:none;text-align:center;padding:48px 24px;
+    background:rgba(255,255,255,.5);border:1px solid var(--line);
+    border-radius:var(--radius);box-shadow:var(--shadow);animation:rise .5s ease both;
+  }
+  .done.show{display:block}
+  .done .check{
+    width:62px;height:62px;border-radius:50%;margin:0 auto 18px;
+    background:var(--good);display:grid;place-items:center;
+  }
+  .done .check svg{width:30px;height:30px;stroke:#fff;stroke-width:3;fill:none}
+  .done h2{font-family:"Fraunces",serif;font-size:30px;margin:0 0 8px}
+  .done p{color:var(--ink-soft);margin:0 auto;max-width:40ch}
+
+  .demo-banner{
+    font-size:13px;background:rgba(188,75,42,.1);border:1px dashed var(--accent);
+    color:var(--accent-deep);border-radius:10px;padding:11px 14px;margin-bottom:24px;
+  }
+  pre.dump{
+    text-align:left;background:var(--ink);color:#f4efe6;border-radius:10px;
+    padding:16px;overflow:auto;font-size:13px;margin-top:20px;line-height:1.5;
+  }
+  footer{margin-top:46px;text-align:center;font-size:12.5px;color:var(--ink-soft)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="kicker">We'd love your input</p>
+    <h1>Help us get to <em>know you</em></h1>
+    <p class="lede">A few quick questions — they adapt to your answers, so you'll only see what's relevant to you. Takes about a minute.</p>
+  </header>
+
+  <div id="demoBanner" class="demo-banner" style="display: block;">
+    <strong>Demo mode:</strong> no submission endpoint is configured yet, so answers are shown on screen instead of being saved. See the setup notes that came with this file.
+  </div>
+
+  <form id="survey" novalidate="">
+
+    <!-- Q1 -->
+    <div class="field" data-field="">
+      <span class="q-num">Question 01</span>
+      <label class="q" for="name">What's your name? <span class="req">*</span></label>
+      <input type="text" id="name" name="name" data-required="" placeholder="Jane Doe">
+      <p class="err">Please enter your name.</p>
+    </div>
+
+    <!-- Q2 -->
+    <div class="field" data-field="">
+      <span class="q-num">Question 02</span>
+      <label class="q" for="email">Your email <span class="req">*</span></label>
+      <p class="hint">So we can follow up. We won't share it.</p>
+      <input type="email" id="email" name="email" data-required="" placeholder="jane@example.com">
+      <p class="err">Please enter a valid email address.</p>
+    </div>
+
+    <!-- Q3 — the main branching question -->
+    <div class="field" data-field="">
+      <span class="q-num">Question 03</span>
+      <label class="q">What are you most interested in? <span class="req">*</span></label>
+      <p class="hint">Your choice decides which questions come next.</p>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="interest" value="Product" data-required="" data-branch="branch-product"><span>A specific product</span></label>
+        <label class="opt"><input type="radio" name="interest" value="Service" data-branch="branch-service"><span>An ongoing service or subscription</span></label>
+        <label class="opt"><input type="radio" name="interest" value="Undecided" data-branch="branch-undecided"><span>I'm not sure yet — still exploring</span></label>
+      </div>
+      <p class="err">Please choose one.</p>
+    </div>
+
+    <!-- BRANCH: Product -->
+    <div class="field conditional" id="branch-product" data-field="">
+      <span class="q-num">Because you chose “a product”</span>
+      <label class="q">Which features matter most to you?</label>
+      <p class="hint">Pick all that apply.</p>
+      <div class="opts">
+        <label class="opt"><input type="checkbox" name="product_features" value="Price"><span>Price</span></label>
+        <label class="opt"><input type="checkbox" name="product_features" value="Quality"><span>Build quality</span></label>
+        <label class="opt"><input type="checkbox" name="product_features" value="Design"><span>Design / looks</span></label>
+        <label class="opt"><input type="checkbox" name="product_features" value="Support"><span>Customer support</span></label>
+      </div>
+      <label class="q" style="margin-top:20px">What's your rough budget?</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="product_budget" value="&lt;50"><span>Under $50</span></label>
+        <label class="opt"><input type="radio" name="product_budget" value="50-200"><span>$50 – $200</span></label>
+        <label class="opt"><input type="radio" name="product_budget" value="200+"><span>$200+</span></label>
+      </div>
+    </div>
+
+    <!-- BRANCH: Service -->
+    <div class="field conditional" id="branch-service" data-field="">
+      <span class="q-num">Because you chose “a service”</span>
+      <label class="q">How large is your team?</label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="service_team" value="Just me"><span>Just me</span></label>
+        <label class="opt"><input type="radio" name="service_team" value="2-10"><span>2 – 10 people</span></label>
+        <label class="opt"><input type="radio" name="service_team" value="11+"><span>11 or more</span></label>
+      </div>
+      <label class="q" for="service_goal" style="margin-top:20px">What's the main thing you're hoping it solves?</label>
+      <textarea id="service_goal" name="service_goal" placeholder="A sentence or two is plenty…"></textarea>
+    </div>
+
+    <!-- BRANCH: Undecided -->
+    <div class="field conditional" id="branch-undecided" data-field="">
+      <span class="q-num">Because you're still exploring</span>
+      <label class="q" for="undecided_help">What would help you decide?</label>
+      <textarea id="undecided_help" name="undecided_help" placeholder="e.g. a demo, pricing details, examples…"></textarea>
+    </div>
+
+    <!-- Q4 — second branch (text reveal) -->
+    <div class="field" data-field="">
+      <span class="q-num">Question 04</span>
+      <label class="q">How did you hear about us? <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="source" value="Search" data-required=""><span>Search engine</span></label>
+        <label class="opt"><input type="radio" name="source" value="Social"><span>Social media</span></label>
+        <label class="opt"><input type="radio" name="source" value="Friend"><span>A friend or colleague</span></label>
+        <label class="opt"><input type="radio" name="source" value="Other" data-branch="branch-source-other"><span>Something else</span></label>
+      </div>
+      <p class="err">Please choose one.</p>
+    </div>
+
+    <div class="field conditional" id="branch-source-other" data-field="">
+      <label class="q" for="source_other">Tell us where:</label>
+      <input type="text" id="source_other" name="source_other" placeholder="e.g. a podcast, a newsletter…">
+    </div>
+
+    <!-- Q5 -->
+    <div class="field" data-field="">
+      <span class="q-num">Question 05</span>
+      <label class="q" for="comments">Anything else you'd like us to know?</label>
+      <textarea id="comments" name="comments" placeholder="Optional"></textarea>
+    </div>
+
+    <div class="submit-row">
+      <button type="submit" class="submit" id="submitBtn">Send my answers</button>
+      <p class="note">Your responses go straight to a private spreadsheet.</p>
+    </div>
+  </form>
+
+  <!-- success state -->
+  <div class="done" id="done">
+    <div class="check"><svg viewBox="0 0 24 24"><polyline points="4 12 10 18 20 6"></polyline></svg></div>
+    <h2>Thank you!</h2>
+    <p id="doneMsg">Your answers have been recorded. We appreciate you taking the time.</p>
+    <pre class="dump" id="dump" style="display:none"></pre>
+  </div>
+
+  <footer>Built as an adaptive survey • edit the questions directly in this file</footer>
+</div>
+
+<script>
+  /* ====== PASTE YOUR ENDPOINT HERE ======
+     Get this URL by deploying the Google Apps Script (see setup notes).
+     Leave as "" to run in demo mode. */
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbyt42ujpRHicP1sY541aFr01vj8AFK2lAUMt85XPqfdfq-p_yHjYoS8kjFWjd-ol1N2/exec";
+  /* ====================================== */
+
+  const form = document.getElementById('survey');
+  const demoBanner = document.getElementById('demoBanner');
+  if(!ENDPOINT) demoBanner.style.display = 'block';
+
+  /* ---- Conditional branching ---- */
+  // Any input with data-branch shows the matching #id when chosen.
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if(t.name && t.type === 'radio'){
+      // gather every branch id controlled by this radio group
+      const group = form.querySelectorAll(`input[name="${t.name}"]`);
+      group.forEach(r => {
+        const id = r.getAttribute('data-branch');
+        if(id){
+          const panel = document.getElementById(id);
+          if(panel) panel.classList.toggle('show', r.checked);
+        }
+      });
+    }
+  });
+
+  /* ---- Validation ---- */
+  function validate(){
+    let ok = true;
+    form.querySelectorAll('[data-field]').forEach(f => f.classList.remove('invalid'));
+
+    form.querySelectorAll('[data-required]').forEach(el => {
+      // skip required checks inside hidden branches
+      const branch = el.closest('.conditional');
+      if(branch && !branch.classList.contains('show')) return;
+
+      const field = el.closest('[data-field]');
+      if(el.type === 'radio'){
+        const checked = form.querySelector(`input[name="${el.name}"]:checked`);
+        if(!checked){ field.classList.add('invalid'); ok = false; }
+      } else if(el.type === 'email'){
+        const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim());
+        if(!valid){ field.classList.add('invalid'); ok = false; }
+      } else if(!el.value.trim()){
+        field.classList.add('invalid'); ok = false;
+      }
+    });
+
+    if(!ok){
+      const first = form.querySelector('.invalid');
+      if(first) first.scrollIntoView({behavior:'smooth', block:'center'});
+    }
+    return ok;
+  }
+
+  /* ---- Collect answers (checkboxes joined, hidden branches skipped) ---- */
+  function collect(){
+    const data = { submitted_at: new Date().toISOString() };
+    const fd = new FormData(form);
+    for(const key of new Set([...fd.keys()])){
+      const all = fd.getAll(key).filter(v => v !== '');
+      if(all.length) data[key] = all.join(', ');
+    }
+    return data;
+  }
+
+  /* ---- Submit ---- */
+  const btn = document.getElementById('submitBtn');
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    if(!validate()) return;
+    const data = collect();
+
+    if(!ENDPOINT){
+      // demo mode — show what would be sent
+      showDone(data, true);
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try{
+      await fetch(ENDPOINT, {
+        method:'POST',
+        // text/plain avoids a CORS preflight; Apps Script reads the raw body
+        body: JSON.stringify(data)
+      });
+      showDone(data, false);
+    }catch(err){
+      btn.disabled = false;
+      btn.textContent = 'Send my answers';
+      alert('Sorry — something went wrong sending your answers. Please try again.');
+    }
+  });
+
+  function showDone(data, isDemo){
+    form.style.display = 'none';
+    document.querySelector('.hero').style.display = 'none';
+    demoBanner.style.display = 'none';
+    const done = document.getElementById('done');
+    done.classList.add('show');
+    if(isDemo){
+      document.getElementById('doneMsg').textContent =
+        'Demo mode: nothing was saved. Here is exactly what would have been sent to your spreadsheet:';
+      const dump = document.getElementById('dump');
+      dump.style.display = 'block';
+      dump.textContent = JSON.stringify(data, null, 2);
+    }
+    done.scrollIntoView({behavior:'smooth', block:'start'});
+  }
+</script>
+
+
+</body></html>
