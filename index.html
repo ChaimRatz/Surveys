@@ -102,9 +102,36 @@
 
   <form id="survey" novalidate>
 
-    <!-- Q1 — master branch -->
+    <!-- Q1 — full name -->
     <div class="field" data-field>
       <span class="q-num">Question 01</span>
+      <label class="q" for="full_name">Full name <span class="req">*</span></label>
+      <input type="text" id="full_name" name="full_name" data-required placeholder="First and last name">
+      <p class="err">Please enter your full name.</p>
+    </div>
+
+    <!-- Q2 — gender -->
+    <div class="field" data-field>
+      <span class="q-num">Question 02</span>
+      <label class="q">Gender <span class="req">*</span></label>
+      <div class="opts">
+        <label class="opt"><input type="radio" name="gender" value="Male" data-required><span>Male</span></label>
+        <label class="opt"><input type="radio" name="gender" value="Female"><span>Female</span></label>
+      </div>
+      <p class="err">Please choose one.</p>
+    </div>
+
+    <!-- Q3 — ten name -->
+    <div class="field" data-field>
+      <span class="q-num">Question 03</span>
+      <label class="q" for="ten_name">Your ten name <span class="req">*</span></label>
+      <input type="text" id="ten_name" name="ten_name" data-required placeholder="…">
+      <p class="err">Please enter your ten name.</p>
+    </div>
+
+    <!-- Q4 — master branch -->
+    <div class="field" data-field>
+      <span class="q-num">Question 04</span>
       <label class="q">Did you participate in the tens' convention? <span class="req">*</span></label>
       <div class="opts">
         <label class="opt"><input type="radio" name="participated" value="Yes" data-required data-branch="branch-yes"><span>Yes</span></label>
